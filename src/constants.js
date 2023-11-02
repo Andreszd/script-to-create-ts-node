@@ -24,6 +24,12 @@ const DEFAULT_FILES = [
       "exec": "npx ts-node ./src/app.ts"
     }`,
   },
+  {
+    name: 'src/app.ts',
+    content: `
+    //Enjoy using ts with node :D
+    `,
+  },
 ];
 
 const COMMANDS_TO_EXEC = [

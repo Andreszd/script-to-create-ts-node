@@ -44,24 +44,23 @@ async function execInitialCommands(dirName) {
   }
 }
 
-function createDefaultFiles(path) {
-  DEFAULT_FILES.map(({ name, content }) => {
-    fs.writeFileSync(`${path}/${name}`, content, { encoding: 'utf8' });
-  });
-}
-
 function createDir(dirName) {
-  const directoryPath = `./${dirName}`;
-
-  if (fs.existsSync(directoryPath)) {
+  if (fs.existsSync(dirName)) {
     throw new Error({
       message: `directory with name ${dirname} already exists`,
       type: ERRORS.DIRNAME_ALREADY_EXISTS,
     });
   } else {
-    fs.mkdirSync(directoryPath);
+    fs.mkdirSync(dirName);
   }
-  return directoryPath;
+  return dirName;
+}
+
+function createDefaultFiles(path) {
+  createDir(`${path}/src`);
+  DEFAULT_FILES.map(({ name, content }) => {
+    fs.writeFileSync(`${path}/${name}`, content, { encoding: 'utf8' });
+  });
 }
 
 function runApp() {
@@ -71,9 +70,11 @@ function runApp() {
     const { name } = result;
 
     try {
-      const dirPath = createDir(name);
+      const baseDir = `./${name}`;
+      createDir(baseDir);
       prompt.stop();
-      createDefaultFiles(dirPath);
+
+      createDefaultFiles(baseDir);
       execInitialCommands(name);
     } catch ({ type }) {
       if (type === ERRORS.DIRNAME_ALREADY_EXISTS) {
