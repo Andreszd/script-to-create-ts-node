@@ -32,6 +32,10 @@ const DEFAULT_FILES = [
     }`,
   },
   {
+    name: '.gitignore',
+    content: 'node_modules \ndist',
+  },
+  {
     name: 'src/app.ts',
     content: `
     //Enjoy using ts with node :D
@@ -41,6 +45,7 @@ const DEFAULT_FILES = [
 
 const COMMANDS_TO_EXEC = [
   'cd :dirName && npm init --y',
+  'cd :dirName && git init',
   'cd :dirName && npm i -D typescript @types/node ts-node nodemon rimraf',
   'cd :dirName && npx tsc --init --outDir dist/ --rootDir src',
   "cd :dirName && npm pkg set 'scripts.dev'='nodemon' && npm pkg set 'scripts.build'='rimraf ./dist && tsc' && npm pkg set 'scripts.start'='npm run build && node dist/app.js'",
