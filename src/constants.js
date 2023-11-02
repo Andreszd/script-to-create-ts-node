@@ -30,6 +30,7 @@ const COMMANDS_TO_EXEC = [
   'cd :dirName && npm init --y',
   'cd :dirName && npm i -D typescript @types/node ts-node nodemon rimraf',
   'cd :dirName && npx tsc --init --outDir dist/ --rootDir src',
+  "cd :dirName && npm pkg set 'scripts.dev'='nodemon' && npm pkg set 'scripts.build'='rimraf ./dist && tsc' && npm pkg set 'scripts.start'='npm run build && node dist/app.js'",
 ];
 
 module.exports = {
