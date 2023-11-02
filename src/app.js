@@ -1,25 +1,17 @@
 #!/usr/bin/env node
-
 const prompt = require('prompt');
-const fs = require('fs');
+
 const cliProgress = require('cli-progress');
 
-const { exec } = require('child_process');
+const { PROMPT_SCHEME, DEFAULT_FILES, COMMANDS_TO_EXEC, ERROR_TYPES } = require('./constants');
 
-const { ERRORS, PROMPT_SCHEME, DEFAULT_FILES, COMMANDS_TO_EXEC } = require('./constants');
-const { replaceVariableTextFragment } = require('./utils');
-
-function execCommand(command) {
-  return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve();
-      }
-    });
-  });
-}
+const {
+  replaceVariableTextFragment,
+  createDir,
+  createFile,
+  getParams,
+  execCommand,
+} = require('./utils');
 
 async function execInitialCommands(dirName) {
   try {
@@ -44,44 +36,41 @@ async function execInitialCommands(dirName) {
   }
 }
 
-function createDir(dirName) {
-  if (fs.existsSync(dirName)) {
-    throw new Error({
-      message: `directory with name ${dirname} already exists`,
-      type: ERRORS.DIRNAME_ALREADY_EXISTS,
-    });
-  } else {
-    fs.mkdirSync(dirName);
-  }
-  return dirName;
-}
-
 function createDefaultFiles(path) {
   createDir(`${path}/src`);
   DEFAULT_FILES.map(({ name, content }) => {
-    fs.writeFileSync(`${path}/${name}`, content, { encoding: 'utf8' });
+    createFile({ path: `${path}/${name}`, content });
   });
 }
 
+function createProject(name) {
+  const baseDir = `./${name}`;
+  createDir(baseDir);
+  createDefaultFiles(baseDir);
+  execInitialCommands(name);
+}
+
 function runApp() {
-  prompt.start();
+  try {
+    const [name] = getParams();
 
-  prompt.get(PROMPT_SCHEME, (_, result) => {
-    const { name } = result;
+    if (name) {
+      createProject(name);
+    } else {
+      prompt.start();
 
-    try {
-      const baseDir = `./${name}`;
-      createDir(baseDir);
-      prompt.stop();
-
-      createDefaultFiles(baseDir);
-      execInitialCommands(name);
-    } catch ({ type }) {
-      if (type === ERRORS.DIRNAME_ALREADY_EXISTS) {
-        execPrompt();
-      }
+      prompt.get(PROMPT_SCHEME, (_, result) => {
+        const { name } = result;
+        prompt.stop();
+        createProject(name);
+      });
     }
-  });
+  } catch (error) {
+    if (error?.type === ERROR_TYPES.DIRNAME_ALREADY_EXISTS) {
+      runApp();
+    }
+    console.error(error);
+  }
 }
 
 module.exports = {

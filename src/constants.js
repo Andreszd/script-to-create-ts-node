@@ -1,5 +1,12 @@
-const ERRORS = {
+const ERROR_TYPES = {
   DIRNAME_ALREADY_EXISTS: 'DIRNAME_ALREADY_EXISTS',
+  INVALID_DIRNAME: 'INVALID_DIRNAME',
+};
+
+const ARGUMENTS_VALIDATION = {
+  name: {
+    pattern: /^[a-zA-Z\-]+$/,
+  },
 };
 
 const PROMPT_SCHEME = {
@@ -40,8 +47,9 @@ const COMMANDS_TO_EXEC = [
 ];
 
 module.exports = {
-  ERRORS,
+  ERROR_TYPES,
   PROMPT_SCHEME,
   DEFAULT_FILES,
   COMMANDS_TO_EXEC,
+  ARGUMENTS_VALIDATION,
 };
