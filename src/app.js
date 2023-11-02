@@ -64,7 +64,7 @@ function createDir(dirName) {
   return directoryPath;
 }
 
-function execPrompt() {
+function runApp() {
   prompt.start();
 
   prompt.get(PROMPT_SCHEME, (_, result) => {
@@ -83,8 +83,6 @@ function execPrompt() {
   });
 }
 
-function main() {
-  execPrompt();
-}
-
-main();
+module.exports = {
+  runApp,
+};
